@@ -4,4 +4,4 @@ services:
         ports:
             - '9000:9000'
         restart: always
-        image: '207m:openai-proxy'
+        image: '207m/openai-proxy'
