@@ -30,7 +30,6 @@ jobs:
           push: true
           file: Dockerfile
           tags: 207m/openai-proxy:latest
-          build-args: PASSWORD=${{ secrets.PASSWORD }}
 
       - name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
