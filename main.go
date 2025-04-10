@@ -114,19 +114,28 @@ func handleRequest(w http.ResponseWriter, r *http.Request) {
 	// 将响应实体写入到响应流中（支持流式响应）
 	buf := make([]byte, 1024)
 	for {
-		if n, err := resp.Body.Read(buf); err == io.EOF || n == 0 {
-			return
-		} else if err != nil {
-			log.Println("error while reading respbody: ", err.Error())
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		} else {
-			if _, err = w.Write(buf[:n]); err != nil {
-				log.Println("error while writing resp: ", err.Error())
-				http.Error(w, err.Error(), http.StatusInternalServerError)
+		n, err := resp.Body.Read(buf)
+		if n > 0 {
+			// 处理已读取的数据，即使遇到错误也要处理这部分数据
+			if _, writeErr := w.Write(buf[:n]); writeErr != nil {
+				log.Println("Error writing response:", writeErr.Error())
 				return
 			}
-			w.(http.Flusher).Flush()
+			if flusher, ok := w.(http.Flusher); ok {
+				flusher.Flush()
+			}
 		}
+
+		// 处理各种错误情况
+		if err == io.EOF {
+			// 读取完毕，正常结束
+			break
+		} else if err != nil {
+			// 其他错误
+			log.Println("Error reading response body:", err.Error())
+			return
+		}
+
+		// 当 n == 0 且没有错误时，继续读取
 	}
 }
