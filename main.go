@@ -71,6 +71,11 @@ func handleRequest(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// 移除可能暴露客户端IP的请求头
+	r.Header.Del("X-Forwarded-For")
+	r.Header.Del("X-Real-IP")
+	r.Header.Del("Client-IP")
+
 	// 将原始请求头复制到新请求中
 	for headerKey, headerValues := range r.Header {
 		for _, headerValue := range headerValues {
