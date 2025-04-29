@@ -1,5 +1,6 @@
 name: Alive
 on:
+  workflow_dispatch:
   schedule:
     - cron: "15 1 * * *"
 
@@ -8,5 +9,5 @@ jobs:
     name: Dummy
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: gautamkrishnar/keepalive-workflow@v1 # using the workflow with default settings
+      - uses: actions/checkout@v4
+      - uses: entepotenz/keep-github-actions-alive-min-dependencies@v1
